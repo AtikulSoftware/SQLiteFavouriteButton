@@ -60,50 +60,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void updateAddFavourite(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("isFavourite", 1);
-        String whereClause = "id = ?";
-        String[] whereArgs = new String[]{String.valueOf(id)};
-
-        int rowsAffected = db.update(DB_TABLE_NAME, values, whereClause, whereArgs);
-        if (rowsAffected > 0) {
+        try {
+            int value = 1;
+            db.execSQL("UPDATE " + DB_TABLE_NAME + " SET isFavourite ='" + value + "' WHERE id =" + id);
             Toast.makeText(context, "Favourite", Toast.LENGTH_SHORT).show();
-        } else {
+        } catch (SQLException e) {
             Toast.makeText(context, "failed", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void updateRemoveFavourite(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("isFavourite", 0);
-        String whereClause = "id = ?";
-        String[] whereArgs = new String[]{String.valueOf(id)};
-
-        int rowsAffected = db.update(DB_TABLE_NAME, values, whereClause, whereArgs);
-        if (rowsAffected > 0) {
+        try {
+            int value = 0;
+            db.execSQL("UPDATE " + DB_TABLE_NAME + " SET isFavourite ='" + value + "' WHERE id =" + id);
             Toast.makeText(context, "Un Favourite", Toast.LENGTH_SHORT).show();
-        } else {
+        } catch (SQLException e) {
             Toast.makeText(context, "failed", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void deleteItem(int id) {
+    public void deleteItem(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String whereClause = "id = ?";
-        String[] whereArgs = new String[]{String.valueOf(id)};
-        int rowsAffected = db.delete(DB_TABLE_NAME, whereClause, whereArgs);
-
-        if (rowsAffected > 0) {
+        try {
+            db.execSQL("DELETE FROM " + DB_TABLE_NAME + " WHERE id LIKE "+id);
             Toast.makeText(context, "Delete successful", Toast.LENGTH_SHORT).show();
-        } else {
+        } catch (SQLException e) {
             Toast.makeText(context, "Delete failed", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
-
-    private void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
 
 } // DatabaseHelper end here ==================

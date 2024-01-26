@@ -21,8 +21,11 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
     HashMap<String, String> hashMap;
     MyAdapter myAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,10 @@ public class MainActivity extends AppCompatActivity {
 
         // databaseHelper কে পরিচয় করিয়ে দেওয়া হয়েছে এবং data get করা হয়েছে ।
         databaseHelper = new DatabaseHelper(MainActivity.this);
-        getData();
+         Cursor cursor = databaseHelper.getUsersData();
+        if (cursor != null){
+            getData();
+        }
 
 
         // Adapter কে পরিচয় করিয়ে দেওয়া হয়েছে এবং List এর মধ্যে set করে দেওয়া হয়েছে ।
@@ -124,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Delete button এর onClick লেখা হয়েছে ।
             imgDelete.setOnClickListener(v -> {
-                databaseHelper.deleteItem(Integer.parseInt(id));
+                databaseHelper.deleteItem(id);
                 getData();
                 notifyDataSetChanged();
             });
@@ -132,25 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
             return myView;
         }
-    }
-
-    private void getData() {
-        Cursor cursor = databaseHelper.getUsersData();
-        arrayList.clear();
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String name = cursor.getString(1);
-            String number = cursor.getString(2);
-            int isFavourite = cursor.getInt(3);
-
-            hashMap = new HashMap<>();
-            hashMap.put("id", "" + id);
-            hashMap.put("name", name);
-            hashMap.put("number", number);
-            hashMap.put("isFavourite", "" + isFavourite);
-            arrayList.add(hashMap);
-        }
-    }
+    } // BaseAdapter end here =====================
 
     private void showDialogBox() {
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -162,8 +151,6 @@ public class MainActivity extends AppCompatActivity {
 
         EditText edName = mView.findViewById(R.id.edName);
         EditText edNumber = mView.findViewById(R.id.edNumber);
-
-        //  databaseHelper = new DatabaseHelper(this);
 
         mView.findViewById(R.id.btnInsert).setOnClickListener(v -> {
 
@@ -183,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isDataInsert) {
                     Toast.makeText(this, "Data Inserted", Toast.LENGTH_SHORT).show();
                     getData();
+                    myAdapter.notifyDataSetChanged();
                     alertDialog.dismiss();
                 } else {
                     Toast.makeText(this, "Data not Inserted", Toast.LENGTH_SHORT).show();
@@ -197,6 +185,26 @@ public class MainActivity extends AppCompatActivity {
 
         alertDialog.show();
     } // ShowDialogBox end here ================
+
+    private void getData() {
+        Cursor cursor = databaseHelper.getUsersData();
+        arrayList.clear();
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(0);
+                String name = cursor.getString(1);
+                String number = cursor.getString(2);
+                int isFavourite = cursor.getInt(3);
+
+                hashMap = new HashMap<>();
+                hashMap.put("id", "" + id);
+                hashMap.put("name", name);
+                hashMap.put("number", number);
+                hashMap.put("isFavourite", "" + isFavourite);
+                arrayList.add(hashMap);
+            }
+        }
+    }
 
     @Override
     protected void onResume() {

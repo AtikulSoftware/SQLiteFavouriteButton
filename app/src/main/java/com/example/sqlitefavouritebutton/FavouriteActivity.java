@@ -124,20 +124,22 @@ public class FavouriteActivity extends AppCompatActivity {
 
     private void getData() {
         Cursor cursor = databaseHelper.getUsersData();
-        arrayList.clear();
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String name = cursor.getString(1);
-            String number = cursor.getString(2);
-            int isFavourite = cursor.getInt(3);
+        if (cursor != null){
+            arrayList.clear();
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(0);
+                String name = cursor.getString(1);
+                String number = cursor.getString(2);
+                int isFavourite = cursor.getInt(3);
 
-            if (isFavourite == 1) {
-                hashMap = new HashMap<>();
-                hashMap.put("id", "" + id);
-                hashMap.put("name", name);
-                hashMap.put("number", number);
-                hashMap.put("isFavourite", "" + isFavourite);
-                arrayList.add(hashMap);
+                if (isFavourite == 1) {
+                    hashMap = new HashMap<>();
+                    hashMap.put("id", "" + id);
+                    hashMap.put("name", name);
+                    hashMap.put("number", number);
+                    hashMap.put("isFavourite", "" + isFavourite);
+                    arrayList.add(hashMap);
+                }
             }
         }
     }
